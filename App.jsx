@@ -1,15 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { supabase } from './lib/supabase'
+import { supabase } from './lib/supabase.js' // ضفنا .js هنا
 
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-
-// --- الإضافات الجديدة هنا لربط الصفحات ---
-import MaintenanceForm from './components/MaintenanceForm'
-import Services from './components/Services'
-// ---------------------------------------
+// التعديل النهائي: ضفنا .jsx لكل الملفات عشان Vite ميتوهش
+import Home from './Home.jsx'
+import Login from './Login.jsx'
+import Dashboard from './Dashboard.jsx'
+import MaintenanceForm from './MaintenanceForm.jsx'
+import Services from './Services.jsx'
 
 /* =========================
     🔐 حماية الصفحات
@@ -24,14 +22,14 @@ function ProtectedRoute({ children }) {
       setUser(data.session?.user || null)
       setLoading(false)
     }
-
     checkUser()
   }, [])
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        جاري التحميل...
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brown-600"></div>
+        <span className="mr-3">جاري التحميل...</span>
       </div>
     )
   }
@@ -56,16 +54,11 @@ function PublicRoute({ children }) {
       setUser(data.session?.user || null)
       setLoading(false)
     }
-
     checkUser()
   }, [])
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        جاري التحميل...
-      </div>
-    )
+    return <div className="min-h-screen flex items-center justify-center">جاري التحميل...</div>
   }
 
   if (user) {
@@ -81,8 +74,9 @@ function PublicRoute({ children }) {
 function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center">
-      <h1 className="text-4xl font-bold mb-4">404</h1>
-      <p className="text-gray-600">الصفحة غير موجودة</p>
+      <h1 className="text-6xl font-bold text-gray-800 mb-4">404</h1>
+      <p className="text-xl text-gray-600">عذراً، هذه الصفحة غير موجودة</p>
+      <a href="/" className="mt-6 text-blue-600 hover:underline">العودة للرئيسية</a>
     </div>
   )
 }
@@ -90,21 +84,20 @@ function NotFound() {
 /* =========================
     🧠 App
 ========================= */
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* 🏠 الصفحة الرئيسية */}
         <Route path="/" element={<Home />} />
 
-        {/* 🛠️ صفحة طلب صيانة (المسار المضاف) */}
+        {/* 🛠️ صفحة طلب صيانة */}
         <Route path="/maintenance" element={<MaintenanceForm />} />
 
-        {/* 🛒 صفحة الخدمات أو المنتجات (المسار المضاف) */}
+        {/* 🛒 صفحة الخدمات */}
         <Route path="/services" element={<Services />} />
 
-        {/* 🔐 تسجيل الدخول (لو مش مسجل فقط) */}
+        {/* 🔐 تسجيل الدخول */}
         <Route
           path="/login"
           element={
@@ -126,10 +119,7 @@ function App() {
 
         {/* 🚫 أي رابط غلط */}
         <Route path="*" element={<NotFound />} />
-
       </Routes>
     </BrowserRouter>
   )
 }
-
-export default App
